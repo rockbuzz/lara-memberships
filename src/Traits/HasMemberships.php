@@ -53,7 +53,15 @@ trait HasMemberships
 
         $permissions = $this->accountPermissions($account);
 
-        return in_array($permission, $permissions) || in_array('*', $permissions);
+        return in_array($permission, $permissions) ||
+            in_array('*', $permissions) ||
+            $this->hasWildcard($permission, $permissions, 'create') ||
+            $this->hasWildcard($permission, $permissions, 'update');
+    }
+
+    protected function hasWildcard(string $permission, array $permissions, $action)
+    {
+        return Str::endsWith($permission, ".{$action}") && in_array("*.{$action}", $permissions);
     }
 
     public function accountPermissions($account)

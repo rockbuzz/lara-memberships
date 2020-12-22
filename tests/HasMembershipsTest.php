@@ -191,11 +191,37 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('super-admin', ['*']);
+        RBAC::role('admin', ['*']);
 
-        $this->addMember($user, $account, 'super-admin');
+        $this->addMember($user, $account, 'admin');
 
         $this->assertTrue($user->hasAccountPermission($account, 'does_not_have'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_true_when_member_has_wildcard_create_permission()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('admin', ['*.create']);
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertTrue($user->hasAccountPermission($account, 'posts.create'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_true_when_member_has_wildcard_update_permission()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('admin', ['*.update']);
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertTrue($user->hasAccountPermission($account, 'posts.update'));
     }
 
     protected function addMember($user, $account, $role = null)
