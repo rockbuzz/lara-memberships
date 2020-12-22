@@ -13,22 +13,6 @@ use Rockbuzz\LaraMemberships\Roles\{NullRole, OwnerRole};
 
 class HasMembershipsTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        RBAC::createFromArray([
-            'admin' => [
-                'posts.store',
-                'posts.update',
-                'posts.delete'
-            ],
-            'editor' => [
-                'posts.store',
-                'posts.update'
-            ]
-        ]);
-    }
     /** @test */
     public function a_user_can_have_owned_accounts()
     {
@@ -79,6 +63,12 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
+        RBAC::role('admin', [
+            'posts.create',
+            'posts.update',
+            'posts.delete'
+        ]);
+
         $this->addMember($user, $account, 'admin');
 
         $role = $user->accountRole($account);
@@ -86,7 +76,7 @@ class HasMembershipsTest extends TestCase
         $this->assertInstanceOf(Role::class, $role);
         $this->assertEquals('admin', $role->key);
         $this->assertEquals([
-            'posts.store',
+            'posts.create',
             'posts.update',
             'posts.delete'
         ], $role->permissions);
@@ -110,14 +100,16 @@ class HasMembershipsTest extends TestCase
     }
 
     /** @test */
-    public function has_account_role_must_return_true_when_member_has_the_role_informed()
+    public function has_account_role_must_return_false_when_member_does_not_have_the_role_informed()
     {
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
+        RBAC::role('admin');
+
         $this->addMember($user, $account, 'admin');
 
-        $this->assertTrue($user->hasAccountRole($account, 'admin'));
+        $this->assertFalse($user->hasAccountRole($account, 'does_not_have'));
     }
 
     /** @test */
@@ -131,6 +123,79 @@ class HasMembershipsTest extends TestCase
         $this->addMember($user, $account);
 
         $this->assertTrue($user->hasAccountRole($account, 'admin'));
+    }
+
+    /** @test */
+    public function has_account_role_must_return_true_when_member_has_the_role_informed()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('admin');
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertTrue($user->hasAccountRole($account, 'admin'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_false_when_member_does_not_have_the_informed_permission()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('admin', [
+            'posts.create',
+            'posts.update',
+            'posts.delete'
+        ]);
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertFalse($user->hasAccountPermission($account, 'does_not_have'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_true_when_user_is_the_account_owner()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class, [
+            'user_id' => $user->id
+        ]);
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertTrue($user->hasAccountPermission($account, 'does_not_have'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_true_when_member_has_the_informed_permission()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('admin', [
+            'posts.create',
+            'posts.update',
+            'posts.delete'
+        ]);
+
+        $this->addMember($user, $account, 'admin');
+
+        $this->assertTrue($user->hasAccountPermission($account, 'posts.create'));
+    }
+
+    /** @test */
+    public function has_account_permission_must_return_true_when_member_has_wildcard_permission()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        RBAC::role('super-admin', ['*']);
+
+        $this->addMember($user, $account, 'super-admin');
+
+        $this->assertTrue($user->hasAccountPermission($account, 'does_not_have'));
     }
 
     protected function addMember($user, $account, $role = null)

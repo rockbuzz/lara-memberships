@@ -14,7 +14,7 @@ class RBAC
         static::$roles = $roles;
     }
 
-    public static function role(string $key, array $permissions)
+    public static function role(string $key, array $permissions = [])
     {
         static::$roles[$key] = $permissions;
     }
@@ -28,5 +28,10 @@ class RBAC
         }
 
         return new NullRole();
+    }
+
+    public static function clear()
+    {
+        static::$roles = [];
     }
 }
