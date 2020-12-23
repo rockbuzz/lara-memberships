@@ -6,13 +6,12 @@ return [
     ],
     'rbac' => [
         /* 'admin' => [
-            'posts.store',
-            'posts.update',
-            'posts.delete'
+            '*'
         ],
         'editor' => [
-            'posts.store',
-            'posts.update'
+            '*.create',
+            '*.update',
+            'posts.delete'
         ] */
     ]
 ];

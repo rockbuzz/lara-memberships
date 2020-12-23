@@ -63,11 +63,11 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', [
+        RBAC::role(new Role('admin', [
             'posts.create',
             'posts.update',
             'posts.delete'
-        ]);
+        ]));
 
         $this->addMember($user, $account, 'admin');
 
@@ -105,7 +105,7 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin');
+        RBAC::role(new Role('admin'));
 
         $this->addMember($user, $account, 'admin');
 
@@ -131,7 +131,7 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin');
+        RBAC::role(new Role('admin'));
 
         $this->addMember($user, $account, 'admin');
 
@@ -144,11 +144,11 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', [
+        RBAC::role(new Role('admin', [
             'posts.create',
             'posts.update',
             'posts.delete'
-        ]);
+        ]));
 
         $this->addMember($user, $account, 'admin');
 
@@ -174,11 +174,11 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', [
+        RBAC::role(new Role('admin', [
             'posts.create',
             'posts.update',
             'posts.delete'
-        ]);
+        ]));
 
         $this->addMember($user, $account, 'admin');
 
@@ -191,7 +191,7 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', ['*']);
+        RBAC::role(new Role('admin', ['*']));
 
         $this->addMember($user, $account, 'admin');
 
@@ -204,7 +204,7 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', ['*.create']);
+        RBAC::role(new Role('admin', ['*.create']));
 
         $this->addMember($user, $account, 'admin');
 
@@ -217,11 +217,22 @@ class HasMembershipsTest extends TestCase
         $user = $this->create(User::class);
         $account = $this->create(Account::class);
 
-        RBAC::role('admin', ['*.update']);
+        RBAC::role(new Role('admin', ['*.update']));
 
         $this->addMember($user, $account, 'admin');
 
         $this->assertTrue($user->hasAccountPermission($account, 'posts.update'));
+    }
+
+    /** @test */
+    public function account_permissions_must_return_wildcard_when_user_owns_the_account()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class, [
+            'user_id' => $user->id
+        ]);
+
+        $this->assertEquals(['*'], $user->accountPermissions($account));
     }
 
     protected function addMember($user, $account, $role = null)

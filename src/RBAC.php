@@ -12,26 +12,21 @@ class RBAC
     public static function createFromArray(array $roles)
     {
         static::$roles = $roles;
+
+        array_walk(static::$roles, function (array $permissions, string $key) {
+            static::role(new Role($key, $permissions));
+        });
     }
 
-    public static function role(string $key, array $permissions = [])
+    public static function role(Role $role)
     {
-        static::$roles[$key] = $permissions;
+        static::$roles[$role->key] = $role->permissions;
     }
 
     public static function findRole($key): Role
     {
-        $role = Arr::exists(static::$roles, $key);
-
-        if ($role) {
-            return new Role($key, static::$roles[$key]);
-        }
-
-        return new NullRole();
-    }
-
-    public static function clear()
-    {
-        static::$roles = [];
+        return Arr::exists(static::$roles, $key) ?
+            new Role($key, static::$roles[$key]) :
+            new NullRole();
     }
 }
