@@ -2,11 +2,12 @@
 
 namespace Tests;
 
+use DomainException;
 use Tests\Stubs\User;
-use Illuminate\Support\Facades\DB;
+use Rockbuzz\LaraMemberships\Role;
+use Illuminate\Support\Facades\{DB, Config};
 use Rockbuzz\LaraMemberships\Models\Account;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Rockbuzz\LaraMemberships\Role;
 
 class AccountTest extends TestCase
 {
@@ -48,6 +49,23 @@ class AccountTest extends TestCase
             'account_id' => $account->id,
             'role' => 'admin'
         ]);
+    }
+
+    /** @test */
+    public function add_member_must_return_exception_when_member_not_a_user_model()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class);
+
+        Config::set('memberships.models.user', 'Other\Model');
+
+        $this->expectException(DomainException::class);
+
+        $userModel = config('memberships.models.user');
+
+        $this->expectExceptionMessage("User argument must be a {$userModel} model");
+
+        $account->addMember($user);
     }
 
     /** @test */

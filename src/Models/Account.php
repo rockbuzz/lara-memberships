@@ -2,6 +2,7 @@
 
 namespace Rockbuzz\LaraMemberships\Models;
 
+use DomainException;
 use Illuminate\Support\Facades\DB;
 use Rockbuzz\LaraMemberships\Role;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,13 @@ class Account extends Model
 
     public function addMember(Model $user, Role $role = null): self
     {
+        $userModel = config('memberships.models.user');
+        throw_unless(
+            is_a($user, $userModel),
+            DomainException::class,
+            "User argument must be a {$userModel} model"
+        );
+
         DB::table('memberships')->insert([
             'user_id' => $user->id,
             'account_id' => $this->id,
