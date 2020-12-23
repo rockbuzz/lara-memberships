@@ -25,13 +25,13 @@ class ServiceProvider extends SupportServiceProvider
         $this->publishes([
             __DIR__ . '/config/memberships.php' => config_path('memberships.php')
         ], 'config');
+
+        RBAC::createFromArray(config('memberships.rbac'));
     }
 
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/config/memberships.php', 'memberships');
-
-        RBAC::createFromArray(config('memberships.rbac'));
     }
 
     private function hasMigrationInProject(string $path, Filesystem $filesystem)
