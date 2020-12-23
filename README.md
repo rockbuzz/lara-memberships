@@ -76,6 +76,10 @@ $account->addMember(User $user, Role $role = null): self;
 
 ### Usage
 ```bash
+docker-compose up -d --build
+```
+
+```bash
 docker-compose exec app composer ...
 ```
 ### Style Code
