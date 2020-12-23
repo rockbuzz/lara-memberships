@@ -11,6 +11,17 @@ use Rockbuzz\LaraMemberships\Role;
 class AccountTest extends TestCase
 {
     /** @test */
+    public function an_account_have_owner()
+    {
+        $user = $this->create(User::class);
+        $account = $this->create(Account::class, [
+            'user_id' => $user->id
+        ]);
+
+        $this->assertEquals($user->id, $account->owner->id);
+    }
+
+    /** @test */
     public function an_account_can_add_member()
     {
         $user = $this->create(User::class);
@@ -50,7 +61,7 @@ class AccountTest extends TestCase
             'account_id' => $account->id
         ]);
 
-        $this->assertInstanceOf(BelongsToMany::class, $account->users());
-        $this->assertContains($user->id, $account->users->pluck('id'));
+        $this->assertInstanceOf(BelongsToMany::class, $account->members());
+        $this->assertContains($user->id, $account->members->pluck('id'));
     }
 }

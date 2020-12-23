@@ -51,20 +51,21 @@ class User
 ```
 
 ```php
-$user->ownedAccounts();
-$user->accounts();
-$user->allAccounts();
-$user->accountRole(Account $account);
-$user->hasAccountRole(Account $account, string $role);
-$user->hasAccountPermission(Account $account, string $permission);
-$user->accountPermissions($account);
-$user->ownsAccount(Account $account);
+$user->ownedAccounts(): HasMany;
+$user->accounts(): BelongsToMany;
+$user->allAccounts(): Collection;
+$user->accountRole(Account $account): Role;
+$user->hasAccountRole(Account $account, string $role): bool;
+$user->accountPermissions($account): string[];
+$user->hasAccountPermission(Account $account, string $permission): bool;
+$user->ownsAccount(Account $account): bool;
 ```
 
 ```php
-$account->users();
-$account->userById(int $id);
-$account->addMember(User $user, Role $role = null);
+$account->owner(): User;
+$account->members(): BelongsToMany;
+$account->findMemberById(int $id): User;
+$account->addMember(User $user, Role $role = null): self;
 ```
 
 ## License
