@@ -2,6 +2,8 @@
 
 Account member management
 
+<p><img src="https://github.com/rockbuzz/lara-memberships/workflows/Main/badge.svg"/></p>
+
 ## Requirements
 
 PHP >=7.2
