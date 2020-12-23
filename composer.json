@@ -1,8 +1,10 @@
 {
     "name": "rockbuzz/lara-memberships",
-    "description": "Abstraction for checkout implementation",
+    "description": "Account member management",
     "keywords": [
-        "memberships"
+        "memberships",
+        "accounts",
+        "laravel"
     ],
     "license": "MIT",
     "authors": [

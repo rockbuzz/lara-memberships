@@ -68,6 +68,27 @@ $account->findMemberById(int $id): User;
 $account->addMember(User $user, Role $role = null): self;
 ```
 
+## Development environment
+
+### Requirements
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Usage
+```bash
+docker-compose exec app composer ...
+```
+### Style Code
+
+``` bash
+composer cs
+```
+### Testing
+
+``` bash
+composer test
+```
+
 ## License
 
 The Lara Memberships is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
