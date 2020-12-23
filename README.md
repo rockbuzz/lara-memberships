@@ -61,6 +61,12 @@ $user->accountPermissions($account);
 $user->ownsAccount(Account $account);
 ```
 
+```php
+$account->users();
+$account->userById(int $id);
+$account->addMember(User $user, Role $role = null);
+```
+
 ## License
 
 The Lara Memberships is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
